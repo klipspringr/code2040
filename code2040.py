@@ -6,16 +6,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 # module that makes HTTP requests easy!
 import requests
 
-req = requests.post("http://challenge.code2040.org/api/reverse", data={'token': 'abfa1dcb4c71b9fd3f790440b332f76c'})
-# data gets returned in req.content, so we'll reverse it there
+req = requests.post("http://challenge.code2040.org/api/haystack", data={'token': 'abfa1dcb4c71b9fd3f790440b332f76c'}).json()
+# data gets returned in req.content, so we'll find the needle in the haystack there when converted to json
 
-reversed_word = ''
+needle = req['needle']
+haystack = req['haystack']
 
-print(req.content)
+for i in range(len(haystack)):
+	if haystack[i] == needle:
+		needle_int = i
 
-for i in range(len(req.content)):
-	reversed_word = req.content[i] + reversed_word
-
-print(reversed_word)
-
-new_req = requests.post("http://challenge.code2040.org/api/reverse/validate", data={'token': 'abfa1dcb4c71b9fd3f790440b332f76c', 'string': reversed_word})
+req = requests.post("http://challenge.code2040.org/api/haystack/validate", data={'token': 'abfa1dcb4c71b9fd3f790440b332f76c', 'needle': needle_int})
