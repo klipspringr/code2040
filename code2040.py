@@ -6,14 +6,19 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 # module that makes HTTP requests easy!
 import requests
 
-req = requests.post("http://challenge.code2040.org/api/haystack", data={'token': 'abfa1dcb4c71b9fd3f790440b332f76c'}).json()
-# data gets returned in req.content, so we'll find the needle in the haystack there when converted to json
+new_req = requests.post("http://challenge.code2040.org/api/prefix", data={'token': 'abfa1dcb4c71b9fd3f790440b332f76c'})
+req = new_req.json()
 
-needle = req['needle']
-haystack = req['haystack']
+prefix = req['prefix']
+array = req['array']
+array_wo_prefix = []
 
-for i in range(len(haystack)):
-	if haystack[i] == needle:
-		needle_int = i
+# only add strings that don't have the the prefix to array_wo_prefix
+for i in range(len(array)):
+	if array[i][:len(prefix)] != prefix:
+		array_wo_prefix.append(str(array[i]))
 
-req = requests.post("http://challenge.code2040.org/api/haystack/validate", data={'token': 'abfa1dcb4c71b9fd3f790440b332f76c', 'needle': needle_int})
+payload = {'token': 'abfa1dcb4c71b9fd3f790440b332f76c', 'array': array_wo_prefix}
+
+# ensure that the content type of the payload is JSON, otherwise it will not be sent as a dictionary!!
+check = requests.post("http://challenge.code2040.org/api/prefix/validate", json=payload)
